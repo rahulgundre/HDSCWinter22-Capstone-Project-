@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<!-- saved from url=(0087)https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Stemming and lemmatizing with sklearn vectorizers</title>
+	
+	<meta name="description" content="">
+	<meta name="image" content="">
+	
+	<meta itemprop="name" content="Stemming and lemmatizing with sklearn vectorizers">
+	<meta itemprop="description" content="">
+	<meta itemprop="image" content="">
+	
+	<meta name="og:title" content="Stemming and lemmatizing with sklearn vectorizers">
+	<meta name="og:description" content="">
+	
+	<meta name="og:url" content="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/">
+	<meta name="og:site_name" content="Stemming and lemmatizing with sklearn vectorizers">
+	<meta name="og:type" content="article">
+	
+	<meta name="article:tag" content="programming sklearn NLP IR ">
+	<link rel="stylesheet" type="text/css" href="./important info on Stemming and lemmatizing with sklearn vectorizers_files/style.css">
+	<link rel="alternate stylesheet" type="text/css" title="Dark theme" href="./important info on Stemming and lemmatizing with sklearn vectorizers_files/dark.css">
+
+    
+    
+
+	
+	
+<script type="text/javascript" async="" src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/recaptcha__en.js.download" crossorigin="anonymous" integrity="sha384-4lxttbm4ASVXW4ZX4IKy2kenct7iqJL/fFpl49ygcTzLZBXCYHmdpYFK+0hPn7bS"></script><script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-117420879-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async="" src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/analytics.js.download"></script>
+
+	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+    
+    <script src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/jquery.min.js.download"></script>
+    <script src="https://d33wubrfki0l68.cloudfront.net/js/6a07380e79fdc8c98a214360cbf11fb5b3396560/scripts/webmention.js" type="text/javascript"></script> 
+
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script async="" src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/api.js.download"></script>
+    <script src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/changetheme.js.download"></script>
+    <script>set_style_from_cookie()</script>
+    
+    <link rel="authorization_endpoint" href="https://indieauth.com/auth">
+    
+    <link rel="webmention" href="https://webmention.io/www.edwinwenink.xyz/webmention">
+    <link rel="pingback" href="https://webmention.io/www.edwinwenink.xyz/xmlrpc">
+	
+	<link href="https://sitewriter.net/www.edwinwenink.xyz/micropub" rel="micropub">
+	<link rel="authorization_endpoint" href="https://indieauth.com/auth">
+	<link rel="token_endpoint" href="https://tokens.indieauth.com/token">
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.0/css/all.css" crossorigin="anonymous">
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%}
+.MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MathJax .MJX-monospace {font-family: monospace}
+.MathJax .MJX-sans-serif {font-family: sans-serif}
+#MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0}
+.MathJax:focus, body :focus .MathJax {display: inline-table}
+.MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important}
+.MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important}
+.MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+.MathJax nobr {white-space: nowrap!important}
+.MathJax img {display: inline!important; float: none!important}
+.MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none}
+.MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MathJax_Processed {display: none!important}
+.MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none}
+.MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none}
+.MathJax_LineBox {display: table!important}
+.MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+.MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)}
+.MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent}
+#MathJax_Tooltip * {filter: none; opacity: 1; background: transparent}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-bold; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Math-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Caligraphic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size1; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size2; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size3; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size4; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.1') format('opentype')}
+.MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+<body><div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;"><div id="MathJax_Hidden"></div></div><div id="MathJax_Message" style="display: none;"></div>
+
+<header>
+    
+    <div id="breadcrumbs">
+	<a href="https://www.edwinwenink.xyz/"><strong><i class="fa fa-home"></i></strong></a>
+
+    
+    
+    
+    
+
+    
+    
+        
+        
+        
+            
+                &gt; <a href="https://www.edwinwenink.xyz/posts">Posts</a>
+            
+        
+    
+        
+        
+        
+            
+                &gt; <a href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/">Stemming and lemmatizing with sklearn vectorizers</a>
+            
+        
+    
+    | 
+	
+    
+        
+            <a href="https://www.edwinwenink.xyz/about/">About</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/archives/">Archives</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/authors/">Authors</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/etc/">Etc</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/now/">Now</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/posts/">Posts</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/series/">Series</a>&nbsp;&nbsp;
+        
+    
+        
+            <a href="https://www.edwinwenink.xyz/zettelkasten/">Zettelkästen</a>&nbsp;&nbsp;
+        
+    
+
+	
+	<a href="https://www.edwinwenink.xyz/index.xml" style="float: right;"><strong><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rss"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg></strong></a>
+
+	
+	<label class="switch" style="float: right;">
+		<input type="checkbox" onclick="switch_style();" name="theme" id="Dark theme">
+		<span class="slider"></span>
+	</label>
+
+</div>
+
+</header>
+
+    
+        <div id="content">
+
+
+<script type="text/x-mathjax-config;executed=true">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+<div class="content">
+  <article class="h-entry">
+      <h1 class="p-name">Stemming and lemmatizing with sklearn vectorizers <aside>{ <a href="https://www.edwinwenink.xyz/tags/programming/">programming</a><a href="https://www.edwinwenink.xyz/tags/sklearn/">sklearn</a><a href="https://www.edwinwenink.xyz/tags/nlp/">NLP</a><a href="https://www.edwinwenink.xyz/tags/ir/">IR</a> } ·
+	   705 words · 4 minute read</aside></h1>
+
+       
+
+    <div class="addendum">
+        
+        
+
+        
+        
+
+        
+        
+        <p>
+          <i>
+          This post is part of the 
+          
+            <a href="https://www.edwinwenink.xyz/series/programming" style="text-decoration: underline;">programming</a> 
+          
+          series.
+          </i>
+        </p>
+        
+    </div>
+
+  
+  
+
+  <div class="e-content">
+    <p>One of the most basic techniques in Natural Language Processing 
+
+<a href="https://www.edwinwenink.xyz/zettelkasten/index_nlp_natural_language_processing/">(NLP)</a>
+ is the creation of feature vectors based on word counts.</p>
+<p><code>scikit-learn</code> provides efficient classes for this:</p>
+<pre><code class="hljs coffeescript"><span class="hljs-keyword">from</span> sklearn.feature_extraction.text <span class="hljs-keyword">import</span> CountVectorizer, TfidfVectorizer
+</code></pre><p>If we want to build feature vectors over a vocabulary of <em>stemmed</em> or <em>lemmatized</em> words, how can we do this and still benefit from the ease and efficiency of using these <code>sklearn</code> classes?</p>
+<h2 id="vectorizers-the-basic-use-case">Vectorizers: the basic use case <a href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#vectorizers-the-basic-use-case">¶</a></h2>
+<p>Conceptually, these vectorizers first build up the vocabulary of your whole text corpus.
+The size of the vocabulary determines the length of the feature vectors, unless you specify a maximum amount of features (which you probably should, cf. 
+
+<a href="https://www.edwinwenink.xyz/zettelkasten/202009151217-zipfs_law/">Zipfs law</a>
+).
+The vectorizers check for each document how often a certain word (or n-gram, technically) occurs in that document.
+The <code>CountVectorizer</code> only takes the term frequency (TF) into account.
+However, words that occur in almost all the documents (like stop words) are not very useful for characterizing individual documents and distinguishing them from others.</p>
+<blockquote>
+<p>We should treat matches on non-frequent terms as more valuable than ones on frequent terms, without disregarding the latter altogether. The natural solution is to correlate a term’s matching value with its collection frequency. (Karen Spärk Jones, 1972)</p>
+</blockquote>
+<p>The <code>TfidfVectorizer</code> therefore additionally weighs the word frequency with how common the word is in the whole corpus.
+If a word occurs a lot in document <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-1" style="width: 0.447em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.391em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.279em, 1000.34em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mi" id="MathJax-Span-3" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.768em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi></math></span></span><script type="math/tex" id="MathJax-Element-1">t</script> but is quite rare throughout the whole corpus, then this is a useful word to characterize the current document.
+Conversely, if a term is frequent in document <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-4" style="width: 0.447em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.391em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.279em, 1000.34em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-5"><span class="mi" id="MathJax-Span-6" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.768em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi></math></span></span><script type="math/tex" id="MathJax-Element-2">t</script> but it occurs a lot in literally every other document as well, then it is a poor descriptor.
+In its most basic form (without smoothing etc.) 
+
+<a href="https://www.edwinwenink.xyz/zettelkasten/202201211817-tf_idf/">TF*IDF scoring</a>
+ looks like this:</p>
+<p><span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;T&lt;/mi&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;&amp;#x2217;&lt;/mo&gt;&lt;mi&gt;l&lt;/mi&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;g&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mfrac&gt;&lt;mi&gt;N&lt;/mi&gt;&lt;mrow&gt;&lt;mi&gt;D&lt;/mi&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-7" style="width: 10.214em; display: inline-block;"><span style="display: inline-block; position: relative; width: 9.603em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(0.669em, 1009.49em, 3.332em, -999.997em); top: -2.161em; left: 0em;"><span class="mrow" id="MathJax-Span-8"><span class="mi" id="MathJax-Span-9" style="font-family: MathJax_Math-italic;">T<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mi" id="MathJax-Span-10" style="font-family: MathJax_Math-italic;">F<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mo" id="MathJax-Span-11" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-12" style="font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-13" style="font-family: MathJax_Main;">,</span><span class="mi" id="MathJax-Span-14" style="font-family: MathJax_Math-italic; padding-left: 0.169em;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-15" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-16" style="font-family: MathJax_Main; padding-left: 0.225em;">∗</span><span class="mi" id="MathJax-Span-17" style="font-family: MathJax_Math-italic; padding-left: 0.225em;">l</span><span class="mi" id="MathJax-Span-18" style="font-family: MathJax_Math-italic;">o</span><span class="mi" id="MathJax-Span-19" style="font-family: MathJax_Math-italic;">g<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-20" style="font-family: MathJax_Main;">(</span><span class="mfrac" id="MathJax-Span-21"><span style="display: inline-block; position: relative; width: 2.833em; height: 0px; margin-right: 0.114em; margin-left: 0.114em;"><span style="position: absolute; clip: rect(3.166em, 1000.89em, 4.165em, -999.997em); top: -4.659em; left: 50%; margin-left: -0.441em;"><span class="mi" id="MathJax-Span-22" style="font-family: MathJax_Math-italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; clip: rect(3.055em, 1002.61em, 4.442em, -999.997em); top: -3.271em; left: 50%; margin-left: -1.329em;"><span class="mrow" id="MathJax-Span-23"><span class="mi" id="MathJax-Span-24" style="font-family: MathJax_Math-italic;">D</span><span class="mi" id="MathJax-Span-25" style="font-family: MathJax_Math-italic;">F<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mo" id="MathJax-Span-26" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-27" style="font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-28" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; clip: rect(0.835em, 1002.83em, 1.224em, -999.997em); top: -1.274em; left: 0em;"><span style="display: inline-block; overflow: hidden; vertical-align: 0em; border-top: 1.3px solid; width: 2.833em; height: 0px;"></span><span style="display: inline-block; width: 0px; height: 1.057em;"></span></span></span></span><span class="mo" id="MathJax-Span-29" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.167em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -1.115em; border-left: 0px solid; width: 0px; height: 2.591em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>T</mi><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo><mo>∗</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mfrac><mi>N</mi><mrow><mi>D</mi><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></mfrac><mo stretchy="false">)</mo></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-3">TF(t,d) * log (\frac{N}{DF(t)})</script></p>
+<p>Where <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;T&lt;/mi&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-30" style="width: 3.776em; display: inline-block;"><span style="display: inline-block; position: relative; width: 3.554em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.224em, 1003.44em, 2.611em, -999.997em); top: -2.161em; left: 0em;"><span class="mrow" id="MathJax-Span-31"><span class="mi" id="MathJax-Span-32" style="font-family: MathJax_Math-italic;">T<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mi" id="MathJax-Span-33" style="font-family: MathJax_Math-italic;">F<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mo" id="MathJax-Span-34" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-35" style="font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-36" style="font-family: MathJax_Main;">,</span><span class="mi" id="MathJax-Span-37" style="font-family: MathJax_Math-italic; padding-left: 0.169em;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span><span class="mo" id="MathJax-Span-38" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.167em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.35em; border-left: 0px solid; width: 0px; height: 1.179em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>T</mi><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-4">TF(t,d)</script> is the frequency of term <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-5-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-39" style="width: 0.447em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.391em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.279em, 1000.34em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-40"><span class="mi" id="MathJax-Span-41" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.768em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi></math></span></span><script type="math/tex" id="MathJax-Element-5">t</script> in document <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-6-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-42" style="width: 0.558em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.502em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.168em, 1000.5em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-43"><span class="mi" id="MathJax-Span-44" style="font-family: MathJax_Math-italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.885em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>d</mi></math></span></span><script type="math/tex" id="MathJax-Element-6">d</script>, <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-7-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;N&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-45" style="width: 1.002em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.946em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.224em, 1000.95em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-46"><span class="mi" id="MathJax-Span-47" style="font-family: MathJax_Math-italic;">N<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.826em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi></math></span></span><script type="math/tex" id="MathJax-Element-7">N</script> is the total amount of documents in the corpus, and <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-8-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;D&lt;/mi&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-48" style="width: 2.888em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.722em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.224em, 1002.61em, 2.611em, -999.997em); top: -2.161em; left: 0em;"><span class="mrow" id="MathJax-Span-49"><span class="mi" id="MathJax-Span-50" style="font-family: MathJax_Math-italic;">D</span><span class="mi" id="MathJax-Span-51" style="font-family: MathJax_Math-italic;">F<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.114em;"></span></span><span class="mo" id="MathJax-Span-52" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-53" style="font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-54" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.167em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.35em; border-left: 0px solid; width: 0px; height: 1.179em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>D</mi><mi>F</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-8">DF(t)</script> is the amount of documents in which term <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-9-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-55" style="width: 0.447em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.391em; height: 0px; font-size: 106%;"><span style="position: absolute; clip: rect(1.279em, 1000.34em, 2.223em, -999.997em); top: -2.05em; left: 0em;"><span class="mrow" id="MathJax-Span-56"><span class="mi" id="MathJax-Span-57" style="font-family: MathJax_Math-italic;">t</span></span><span style="display: inline-block; width: 0px; height: 2.056em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.056em; border-left: 0px solid; width: 0px; height: 0.768em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>t</mi></math></span></span><script type="math/tex" id="MathJax-Element-9">t</script> occurs.
+The logarithm is called the Inverse Document Frequency (IDF), hence we get TF*IDF.
+The logarithm prevents that very rare words completely dominate the score.
+Additionally, it punishes the most frequent words relatively heavy.</p>
+<h2 id="composing-a-new-tokenizer">Composing a new tokenizer <a href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#composing-a-new-tokenizer">¶</a></h2>
+<p>It is very convenient and efficient to use the <code>sklearn</code> vectorizers, but how can we use them when we want to do additional natural language processing during the building of the corpus vocabulary?</p>
+<p>Vectorizers can be customised with three arguments: 1) preprocessor, 2) tokenizer, and 3) analyzer:</p>
+<ol>
+<li>The preprocessor is a callable that operates on a whole string and returns a whole string.</li>
+<li>The tokenizer takes the preprocessor output and returns a list of tokens.</li>
+<li>The analyzer is a callable that replaces the whole pipeline, including preprocessing and tokenization, and I think also including N-gram extraction and stop word filtering.</li>
+</ol>
+<p>So in order to add stemming or lemmatization to the sklearn vectorizers, a good approach is to include this in a custom tokenize function.
+This does assume our stemming and lemmatization functions only need access to tokens, instead of the whole input strings (may be documents, sections, paragraphs, sentences etc.).</p>
+<p>This is a very nice snippet to compose functions using <code>functools</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python hljs" data-lang="python"><span style="color:#f92672"><span class="hljs-keyword">import</span></span> functools
+
+<span style="color:#66d9ef"><span class="hljs-function"><span class="hljs-keyword">def</span></span></span><span class="hljs-function"> </span><span style="color:#a6e22e"><span class="hljs-function"><span class="hljs-title">compose</span></span></span><span class="hljs-function"><span class="hljs-params">(</span></span><span style="color:#f92672"><span class="hljs-function"><span class="hljs-params">*</span></span></span><span class="hljs-function"><span class="hljs-params">functions)</span>:</span>
+    <span style="color:#e6db74"><span class="hljs-string">'''
+</span></span><span style="color:#e6db74"><span class="hljs-string">    Compose an arbitary amount of functions into a single function
+</span></span><span style="color:#e6db74"><span class="hljs-string">    Source: https://mathieularose.com/function-composition-in-python
+</span></span><span style="color:#e6db74"><span class="hljs-string">    '''</span></span>
+    <span style="color:#66d9ef"><span class="hljs-function"><span class="hljs-keyword">def</span></span></span><span class="hljs-function"> </span><span style="color:#a6e22e"><span class="hljs-function"><span class="hljs-title">comp</span></span></span><span class="hljs-function"><span class="hljs-params">(f, g)</span>:</span>
+        <span style="color:#66d9ef"><span class="hljs-keyword">return</span></span> <span style="color:#66d9ef"><span class="hljs-keyword">lambda</span></span> x: f(g(x))
+    <span style="color:#66d9ef"><span class="hljs-keyword">return</span></span> functools<span style="color:#f92672">.</span>reduce(comp, functions, <span style="color:#66d9ef"><span class="hljs-keyword">lambda</span></span> x: x)
+</code></pre></div><p>Assuming we have some class where we can assign a stemmer, a lemmatizer, or neither, we can override the tokenizer as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python hljs" data-lang="python"><span style="color:#75715e"><span class="hljs-comment"># If a stemmer or lemmatizer is provided in the configuration</span></span>
+<span style="color:#75715e"><span class="hljs-comment"># compose a new tokenization function that includes stemming/lemmatization after tokenization.</span></span>
+<span style="color:#75715e"><span class="hljs-comment"># This allows stemming or lemmatization to be integrated e.g. with CountVectorizer</span></span>
+<span style="color:#66d9ef"><span class="hljs-keyword">if</span></span> stemmer: 
+    self<span style="color:#f92672">.</span>_tokenize <span style="color:#f92672">=</span> compose(self<span style="color:#f92672">.</span>_stemmer<span style="color:#f92672">.</span>stem, self<span style="color:#f92672">.</span>_tokenizer<span style="color:#f92672">.</span>tokenize)
+<span style="color:#66d9ef"><span class="hljs-keyword">elif</span></span> lemmatizer:
+    self<span style="color:#f92672">.</span>_tokenize <span style="color:#f92672">=</span> compose(self<span style="color:#f92672">.</span>_lemmatizer<span style="color:#f92672">.</span>lemmatize, self<span style="color:#f92672">.</span>_tokenizer<span style="color:#f92672">.</span>tokenize)
+<span style="color:#66d9ef"><span class="hljs-keyword">else</span></span>:
+    self<span style="color:#f92672">.</span>_tokenize <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_tokenizer<span style="color:#f92672">.</span>tokenize
+</code></pre></div><p>Note that the order of the composition matters, because the function signatures differ.
+A tokenization function takes a string as an input and outputs a list of tokens, and our stemming or lemmatization function then operates on this list of tokens.
+We can now define a <code>TfidfVectorizer</code> with our custom callable!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python hljs" data-lang="python">ngram_range <span style="color:#f92672">=</span> (<span style="color:#ae81ff"><span class="hljs-number">1</span></span>,<span style="color:#ae81ff"><span class="hljs-number">1</span></span>)
+max_features <span style="color:#f92672">=</span> <span style="color:#ae81ff"><span class="hljs-number">1000</span></span>
+use_idf <span style="color:#f92672">=</span> <span class="hljs-keyword">True</span>
+
+tfidf <span style="color:#f92672">=</span> TfidfVectorizer(tokenizer<span style="color:#f92672">=</span>self<span style="color:#f92672">.</span>_tokenize,
+                        max_features<span style="color:#f92672">=</span>max_features,
+                        ngram_range<span style="color:#f92672">=</span>ngram_range,
+                        min_df<span style="color:#f92672">=</span><span style="color:#ae81ff"><span class="hljs-number">1</span></span>, 
+                        max_df<span style="color:#f92672">=</span><span style="color:#ae81ff"><span class="hljs-number">1.0</span></span>,
+                        use_idf<span style="color:#f92672">=</span>use_idf)
+</code></pre></div><p>The vocabulary will now consist of stems and lemmas.</p>
+
+  </div>
+  </article>
+  </div> 
+
+  <hr>
+
+  <div>
+  <aside>
+      <i class="fas fa-clock" style="font-size:24px;"></i>
+      705 words · 4 minute read
+  </aside>
+  <aside>
+      <i class="fa fa-home" style="font-size:24px"></i>
+      <a class="u-url" href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/">Published <time class="dt-published">21 January, 2022</time> by </a><a rel="author" class="p-author h-card" href="https://www.edwinwenink.xyz/author/edwin-wenink">Edwin Wenink</a>
+  </aside>
+  <aside> 
+    <i class="fas fa-tools" style="font-size:24px"></i> Last modified on 21 January, 2022.
+    
+    
+        <a href="https://github.com/EdwinWenink/personal_website/commit/b4d4cb45c5989cd955fc0c02a6560fac997557f3" target="_blank">b4d4cb4 different rendering logic for images in zettelkasten</a>
+    
+  </aside>
+  </div>
+  <br>
+
+
+  <div>
+
+
+
+
+
+<p><a href="https://www.edwinwenink.xyz/posts/66-regex_with_starting_and_ending_optional_groups/">Regular expressions with optional starting or ending groups</a> &lt;-- Latest</p>
+
+
+
+<p><a href="https://www.edwinwenink.xyz/posts/66-regex_with_starting_and_ending_optional_groups/">Regular expressions with optional starting or ending groups</a> &lt;-- Next</p>
+
+
+
+<p><a href="https://www.edwinwenink.xyz/posts/64-apply_operations_on_grouped_objects_pandas/">Applying operations on grouped dataframes in Pandas</a> &lt;-- Previous</p>
+
+
+
+<p><a href="https://www.edwinwenink.xyz/posts/56-learning_gaussian_univariate_inference_by_heart/">Mnemonic for closed-form Bayesian univariate inference with Gaussians</a> &lt;-- Random</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<h2> Webmentions </h2>
+
+<div class="post-mentions" id="post-mentions" style="display:none">
+    <ul class="mentions-list" id="mentions-list"></ul>
+</div>
+<br>
+
+<form class="webmention-form" action="https://webmention.io/www.edwinwenink.xyz/webmention" method="post">
+     <div class="wm-form-label">Do you want to link a <a href="https://indieweb.org/Webmention" target="_blank">webmention</a> to this page? <br>
+            Provide the URL of your response for it to show up here.</div>
+        <br> 
+        <div class="form-fields">
+          <input type="url" name="source" placeholder="Your Post URL">
+          <input type="submit" value="Send Webmention">
+        </div>
+        <input type="hidden" name="target" value="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/">
+</form>
+
+
+<script src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/changevalue.js.download"></script>
+<section class="post-comments">
+	
+  
+
+  <h2 id="comments">Comments</h2>
+
+  
+
+  
+
+  
+		<p>Nothing yet. Be the first!</p>
+  
+</section>
+
+
+<br>
+<br>
+<h2> Leave a comment </h2>
+
+<form class="post-new-comment" id="comment-form" method="POST" action="http://77.249.145.182:1234/v2/entry/EdwinWenink/personal_website/master/comments">
+  <input type="hidden" name="options[redirect]" value="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#post-submitted">
+  <input type="hidden" name="option[redirectError]" value="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#post-error">
+  <input name="fields[name]" type="text" class="post-comment-field" placeholder="Your name"> 
+  <input type="hidden" name="options[parent]" value="65-stemming_and_lemmatizing_with_sklearn_vectorizers">
+  <input type="hidden" name="options[entryId]" value="65-stemming_and_lemmatizing_with_sklearn_vectorizers">
+  <input name="fields[reply_to]" type="hidden" value="">
+  
+  <input name="options[slug]" type="hidden" value="65-stemming_and_lemmatizing_with_sklearn_vectorizers">
+  <textarea name="fields[body]" class="post-comment-field" placeholder="24-08-2021 CURRENTLY OFFLINE, SUFFERED HARDWARE FAILURE AND DIDN&#39;T FIX IT YET - Write your message here. Feel free to use markdown.
+N.B. the comments are processed by a raspberry pi from my home. If the connection is gone, please send me an email." rows="10"></textarea>
+	<div class="g-recaptcha" data-sitekey="6LeIcYQUAAAAAEmaP89swNtAL90F0KwpsCyX-l7i" data-callback="enableBtn"><div><iframe src="./important info on Stemming and lemmatizing with sklearn vectorizers_files/fallback.html" frameborder="0" scrolling="no" style="width: 302px; height: 422px;"></iframe><div style="margin: -4px 0px 0px; padding: 0px; background: rgb(249, 249, 249); border: 1px solid rgb(193, 193, 193); border-radius: 3px; height: 60px; width: 300px;"><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: block;"></textarea></div></div></div>
+	<input type="submit" class="post-comment-field btn" value="Submit" id="submit_button" disabled="">
+</form>
+
+<script type="text/javascript">
+	document.getElementById("submit_button").disabled = true;
+</script>
+
+<script type="text/javascript">
+	function enableBtn(){
+		document.getElementById("submit_button").disabled = false;
+	}
+</script>
+
+<div id="post-submitted" class="dialog">
+<h3>Thank you</h3>
+  <p>Your post has been submitted and will be published once it has been approved.</p>
+  
+  <p><a href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#" class="btn">OK</a></p>
+</div>
+
+<div id="post-error" class="dialog">
+	<h3> Something went wrong! </h3>
+	<p> Your comment has not been submitted. Return to the page by clicking OK. </p>
+	<p><a href="https://www.edwinwenink.xyz/posts/65-stemming_and_lemmatizing_with_sklearn_vectorizers/#" class="btn">OK</a></p>
+</div>
+
+
+
+        <footer>
+    
+    <div class="h-card vcard">
+		<a href="mailto:edwinwenink@hotmail.com" class="u-email email metatag"> edwin wenink at hotmail dot com </a>
+		<a rel="me" href="https://github.com/EdwinWenink">GitHub</a>
+        <a rel="me" href="https://tilde.club/~ejw">tilde.club/~ejw</a>
+		<a href="https://www.edwinwenink.xyz/page/pgp" rel="pgpkey autn">PGP</a>
+		<a rel="me" href="https://www.linkedin.com/in/ejwenink/">LinkedIn</a>
+		<a href="https://open.spotify.com/user/11132628344">Spotify</a>
+		<a rel="me" href="https://www.last.fm/user/EdwinW/">LastFM</a>
+		<a rel="me" href="https://www.discogs.com/user/EJWenink/collection">Discogs</a>
+		<a rel="me" href="https://idf.social/@edwin">Mastodon</a>
+        <a hidden="" rel="me" class="u-url p-name url author metatag" href="https://www.edwinwenink.xyz/">Edwin Wenink</a>
+    </div>
+</footer>
+
+
+
+    
+
+<div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-family: MathJax_Main, sans-serif;"></div></div></body></html>
